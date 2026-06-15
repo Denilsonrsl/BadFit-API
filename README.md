@@ -73,4 +73,4 @@ http://localhost:8080/swagger-ui/index.html
 
 ## Autor
 
-Projeto desenvolvido por Denilson Rodrigues para a disciplina de DAW2.
+Projeto desenvolvido por Denilson Rodrigues e Pedro Henrik para a disciplina de DAW2.
