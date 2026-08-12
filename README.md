@@ -1,72 +1,40 @@
 # BadFit API
 
-Projeto desenvolvido para a disciplina de **Desenvolvimento de Aplicações Web II (DAW2)**.
+Projeto desenvolvido para a disciplina de **Banco de Dados II (BD II)** - IFPB.
 
-A aplicação consiste em uma API REST para gerenciamento de uma academia, permitindo o cadastro e gerenciamento de alunos, planos, matrículas, pagamentos, instrutores, fichas de treino, exercícios e itens da ficha.
+A aplicação consiste em uma API REST para gerenciamento de uma academia, integrando o backend Spring Boot com o banco de dados PostgreSQL hospedado no **Supabase** e controle de acesso via **Row Level Security (RLS)**.
 
-## Tecnologias utilizadas
+## 🛠️ Tecnologias Utilizadas
 
 * Java 17
 * Spring Boot
 * Spring Data JPA
-* PostgreSQL / Neon DB
+* PostgreSQL (**Supabase**)
+* PostgreSQL **Row Level Security (RLS)**
 * Swagger / OpenAPI
 * Bean Validation
 * Maven
 
-## Principais funcionalidades
+## 📁 Scripts de Banco de Dados
 
-* CRUD de alunos
-* CRUD de planos
-* CRUD de exercícios
-* CRUD de instrutores
-* CRUD de matrículas
-* CRUD de pagamentos
-* CRUD de fichas de treino
-* CRUD de itens da ficha
-* Filtros em endpoints
-* Paginação
-* Validação de dados
-* Tratamento de erros com Exception Handler
-* Documentação da API com Swagger
+Os scripts SQL para estrutura, segurança e povoamento do banco encontram-se na pasta `src/main/resources/`:
 
-## Entidades principais
+* **`schema.sql`**: Script DDL com a criação de todas as tabelas (`tb_usuario`, `tb_treino`, `tb_exercicio`, etc.).
+* **`rls-policies.sql`**: Ativação do Row Level Security e definição das políticas de acesso por perfil (`ALUNO`, `INSTRUTOR`, `ADMIN`).
+* **`data.sql`**: Povoamento inicial com dados de teste.
 
-* Aluno
-* Plano
-* Matricula
-* Pagamento
-* Instrutor
-* Ficha
-* Exercicio
-* ItemFicha
+## 🔐 Segurança e Níveis de Acesso (RLS)
 
-## Configuração do banco de dados
+A camada de banco de dados utiliza RLS para garantir a privacidade e restrição de dados:
+* **ALUNO**: Visualiza apenas seus próprios treinos, avaliações físicas e mensalidades.
+* **INSTRUTOR**: Gerencia exercícios, cria treinos e registra avaliações físicas para os alunos.
+* **ADMIN**: Possui acesso total de leitura e escrita em todas as tabelas do sistema.
 
-O projeto utiliza variáveis de ambiente para conexão com o banco:
+## ⚙️ Configuração do Banco de Dados
 
-```properties
-DB_URL=jdbc:postgresql://host-do-neon/neondb?sslmode=require
-DB_USERNAME=usuario
-DB_PASSWORD=senha
-```
-
-No arquivo `application.properties`, a conexão é feita assim:
+O projeto está configurado para conectar ao **Supabase**. As credenciais podem ser definidas no `application.properties` ou via variáveis de ambiente:
 
 ```properties
 spring.datasource.url=${DB_URL}
 spring.datasource.username=${DB_USERNAME}
 spring.datasource.password=${DB_PASSWORD}
-```
-
-## Como executar
-
-1. Clonar o repositório.
-2. Configurar as variáveis de ambiente do banco de dados.
-3. Abrir o projeto no IntelliJ IDEA.
-4. Executar a classe principal `BadfitApiApplication`.
-5. Acessar o Swagger:
-
-```text
-http://localhost:8080/swagger-ui/index.html
-```
