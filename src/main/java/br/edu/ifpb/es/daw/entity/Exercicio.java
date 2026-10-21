@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
+@Table(name = "tb_exercicio")
 public class Exercicio {
 
     @Id
@@ -68,4 +69,4 @@ public class Exercicio {
     public int hashCode() {
         return Objects.hash(id);
     }
-}
+}

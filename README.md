@@ -38,3 +38,29 @@ O projeto está configurado para conectar ao **Supabase**. As credenciais podem 
 spring.datasource.url=${DB_URL}
 spring.datasource.username=${DB_USERNAME}
 spring.datasource.password=${DB_PASSWORD}
+
+## Cache-aside em `GET /api/exercicios/{id}`
+
+Foi aplicada a estratégia **cache-aside** na busca de exercício por id (`ExercicioService.buscarPorId`).
+
+**Como funciona**
+1. A requisição chega ao service, que procura o exercício no cache.
+2. *Cache hit*: devolve o valor guardado, sem consultar o banco.
+3. *Cache miss*: consulta o banco, guarda o resultado no cache e devolve.
+4. `atualizar` e `excluir` removem a entrada do cache (invalidação), para a leitura seguinte buscar o dado atual.
+
+**Decisões**
+- Cache em memória com Caffeine (o projeto não tinha Redis). TTL de 5 minutos e no máximo 500 entradas.
+- Endpoint escolhido porque o catálogo de exercícios muda pouco e é igual para todos os usuários, sem risco de entregar dado de uma pessoa a outra.
+- A listagem (`GET /api/exercicios`) não usa cache, pois depende de página, tamanho e filtro.
+- `null` (id inexistente) não é guardado no cache.
+- Limitação: o cache vive na memória de cada instância da API. Com várias instâncias, cada uma teria o seu, e um cache compartilhado (ex.: Redis) seria o próximo passo.
+
+**Como validar** (com a API rodando em `localhost:8080`; as mensagens `CACHE ...` aparecem no console)
+```bash
+curl http://localhost:8080/api/exercicios/1   # CACHE MISS (consulta o banco)
+curl http://localhost:8080/api/exercicios/1   # CACHE HIT (sem novo select)
+```
+Invalidação: crie um exercício (`POST`), leia (`MISS`, `HIT`), altere com `PUT` (`INVALIDATE`) e leia de novo: deve vir o dado novo (`MISS`). Depois exclua com `DELETE` (`INVALIDATE`).
+
+Expiração: espere mais de 5 minutos após uma leitura e leia de novo: deve aparecer `CACHE MISS`.
