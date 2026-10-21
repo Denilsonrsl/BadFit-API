@@ -59,6 +59,12 @@
             <version>2.8.9</version>
         </dependency>
 
+        <!-- Cache em memoria (Caffeine) -->
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+        </dependency>
+
         <!-- Testes -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
